@@ -48,4 +48,4 @@ plan = SKELETON(1)(STRUCT([hortus,ot,otrt,alt,allat,allatrt,
 
 
 
-VIEW(plan)
+#VIEW(plan)
