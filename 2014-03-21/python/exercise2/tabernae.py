@@ -23,4 +23,4 @@ contorno = COLOR(GREEN)(SKELETON(1)(STRUCT([x_lato,T([1])([4])(yt),yt,xc])))
 
 contprod = STRUCT([(PROD)([contorno,Q(4)]),wind3rrt,wind3rrt2,wind4rrt])
 
-#VIEW(STRUCT([wind4rr]))
+VIEW(STRUCT([wind4rr]))

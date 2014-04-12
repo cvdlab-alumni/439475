@@ -20,4 +20,4 @@ contorno = COLOR(BLACK)(SKELETON(1)(STRUCT([x_lato,T([1])([12])(yt),yt,xc])))
 contprod = STRUCT([(PROD)([contorno,Q(4)]),wind2rrt,wind2rrt2])
 
 
-#VIEW(STRUCT([wind2rrt,contprod,wind2rrt2]))
+VIEW(STRUCT([wind2rrt,contprod,wind2rrt2]))

@@ -29,7 +29,8 @@ pts024 = [[0,0,0],[6,0,0],[6,6,0],[0,6,0]]
 p024 = AA(MK)(pts024) 
 s024 = STRUCT(AA(JOIN)([p024[0:4]]))
 s0214 = T([1])([2])(s024)
-d024 = JOIN([s02,s0214])
+s0215 = T([1,3])([2,2])(s024)
+d024 = JOIN([s0215,s0214])
 d0214 = SKELETON(1)(d024)
 d0224 = R([1,2])(PI)(d0214)
 
@@ -37,11 +38,11 @@ quad = JOIN([d022,d322t])
 quad2 = JOIN([d0224,d022])
 quad31 = DIFF([quad,quad2])
 quad32 = DIFF([quad2,quad])
-quad33 = STRUCT([quad31,quad32])
-quad1 = SKELETON(1)(quad33)
+quad33 = STRUCT([quad32,quad31])
+quad1 = SKELETON(2)(quad33)
 
 
 
 #contorno = COLOR(BLACK)(SKELETON(1)(STRUCT([x_lato,T([1])([3])(yt),yt1,xc])))
 
-#VIEW(STRUCT([quad1]))
+#VIEW(STRUCT([quad]))
