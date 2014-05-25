@@ -10,11 +10,11 @@ from largrid import *
 from mapper import *
 from boolean import *
 from sysml import *
-
+ 
 from esercizio1 import *
 
 DRAW = COMP([VIEW,STRUCT,MKPOLS])
-modelloFinale = modFin
+modelloFinale = STRUCT(appart_solido)
 modelloFinaleT = T([1,2])([-10,5])(modelloFinale)
 modelloFinaleR = R([1,2])(-PI/2)(modFin)
 modelloFinaleRR = R([1,2])(-PI/2)(modelloFinaleR)
@@ -56,15 +56,20 @@ hpc = SKEL_1(STRUCT(MKPOLS(z_splitted)))
 hpc = cellNumbering (z_splitted,hpc)(range(len(z_splitted[1])),CYAN,1)
 #VIEW(hpc)
 
-toRemove = [33,28,13,12,4,20]
-V,CV = z_splitted
+toMerge = 11
+assxy_split = assemblyDiagramInit([3,4,1])([[1.1,2,1.1],[4.6,1.3,2,1.3],[3.3]])
+xy_splitted = diagram2cell(assxy_split,z_splitted,toMerge)
+hpc = SKEL_1(STRUCT(MKPOLS(xy_splitted)))
+hpc = cellNumbering (xy_splitted,hpc)(range(len(xy_splitted[1])),CYAN,1)
+#VIEW(hpc)
+
+toRemove = [12,11,40,32,27,4,19]
+V,CV = xy_splitted
 andron = V,[cell for k,cell in enumerate(CV) if not (k in toRemove)]
 #DRAW(andron)
 andronFinPianiIntermedi = STRUCT(MKPOLS(andron))
 andronFinPianiIntermediR = R([1,2])(PI/2)(andronFinPianiIntermedi)
 ####################FINE ANDRONE PIANI INTERMEDI ###################
-subt = T([1,2])([1,2])(CUBOID([2,2,.3]))
-andronBuco = DIFF([andronFinPianiIntermedi,subt])
 
 
 #Funzione che disegna una scala
@@ -80,17 +85,56 @@ def stairs(x_step,z_step,l_stairs,h_stairs):
 	return STRUCT([steps,bottom])
 
 scala = stairs(2,0.33,4,3.3)
-scalaRT =R([1,2])(PI)(scala)
-scalaT = T([1,2,3])([3,6,-2.97])(scalaRT)
+scalaRT =R([1,2])(PI/2)(scala)
+scalaT = T([1,2,3])([-4.7,1.5,-2.97])(scalaRT)
+scalaT2 = T([1,2,3])([-4.7,1.5,-2.97])(scalaRT)
 
-scalAndr = STRUCT([andronBuco,scalaT])
-scalAndrPos = R([1,2])(PI/2)(scalAndr)
-scalAndrPosT = T([3])([3.3])(scalAndrPos)
 
-#VIEW(STRUCT([andronBuco,scalaT]))
+scalAndr = STRUCT([andronFinPianiIntermediR,scalaT])
+scalAndr2 = STRUCT([andronFinPianiIntermediR,scalaT2])
+
+#VIEW(scalAndr)
+
+
+scalAndrPos = R([1,2])(PI)(scalAndr)
+scalAndrPos2 = R([1,2])(2*PI)(scalAndr2)#scale piu androne sfalsate 2 re ruotate
+
+
+
+scalAndrPosT = T([1,2,3])([-10,5,3.3])(scalAndrPos)
+scalAndrPosT2 = T([3])([3.3])(scalAndrPos2)
+
+
+#VIEW(STRUCT([andronFinPianiIntermediR,scalaT]))
+
 modelLat = STRUCT([modelloFinaleRR,modelloFinaleT])
 modelLatT = T([3])([3.3])(modelLat)
-model2Plan = STRUCT([modelLat,modelLatT,andronFinPianiIntermediR,scalAndrPosT])
-model2PlanReply = STRUCT(NN(5)([ model2Plan, T([3])(6.6) ]))
 
-VIEW(model2PlanReply)
+piani2intem = STRUCT([modelLatT,scalAndrPosT])
+
+piani2intem2 = STRUCT([modelLatT,scalAndrPosT2])
+piani2terra = STRUCT([modelLat,andronFinPianiIntermediR])
+
+
+#VIEW(piani2terra)
+
+#print(UKPOL(piani2terra))
+#modello = V,CV
+#DRAW(modello)
+
+model2PlanReply = STRUCT(NN(5)([ piani2intem, T([3])(6.6) ]))
+
+#VIEW(model2PlanReply)
+model2PlanRR2 =  STRUCT([T([3])([3.3])(piani2intem2),T([3])([9.9])(piani2intem2),T([3])([16.5])(piani2intem2),T([3])([23.1])(piani2intem2),T([3])([29.7])(piani2intem2)])
+condominio = STRUCT([model2PlanRR2,model2PlanReply,piani2terra])
+condominioT = T([1,2])([20,20])(condominio)
+assetCondomini = STRUCT(NN(4)([ condominioT, R([1,2])(PI/2) ]))
+assetCondominiT = T([1,2])([40,40])(assetCondomini)
+assetCondomini2 = STRUCT(NN(4)([ assetCondominiT, R([1,2])(PI/2) ]))
+assetCondominiT2 = T([1,2])([60,60])(assetCondomini2)
+assetCondomini22 = STRUCT(NN(4)([ assetCondominiT2, R([1,2])(PI/2) ]))
+
+
+#VIEW(STRUCT([assetCondomini22]))
+VIEW(STRUCT([condominio]))
+
