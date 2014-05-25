@@ -16,7 +16,7 @@ from esercizio1 import *
 DRAW = COMP([VIEW,STRUCT,MKPOLS])
 modelloFinale = STRUCT(appart_solido)
 modelloFinaleT = T([1,2])([-10,5])(modelloFinale)
-modelloFinaleR = R([1,2])(-PI/2)(modFin)
+modelloFinaleR = R([1,2])(-PI/2)(modelloFinale)
 modelloFinaleRR = R([1,2])(-PI/2)(modelloFinaleR)
 
 
