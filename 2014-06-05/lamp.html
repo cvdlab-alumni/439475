@@ -281,6 +281,7 @@
         return plane1;
       }
 
+      var renderCamera = camera;
       
       // add the output of the renderer to the html element
       $('body').append(renderer.domElement);
@@ -480,7 +481,7 @@
         renderCamera = value ? inspectedCamera : camera;
       });
 
-      var renderCamera = camera;
+      
 
 
       function render() {
