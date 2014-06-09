@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html>
+ <head> 
+  <title>PixarLamp</title> 
+  <style>
+    body{
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #stats {  /* Align stats top-left */
+      position: absolute;
+      left: 0px;
+      top: 0px;
+    }
+  </style> 
+  </head>
+  <body>
+  <!-- JavaScript libraries -->
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> 
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/stats.js/r11/Stats.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
+  <script src="assets/libs/TrackballControls.js"></script>
+  <script type="text/javascript" src="assets/fonts/helvetiker_regular.typeface.js"></script> 
+  <script type="text/javascript" src="assets/fonts/helvetiker_bold.typeface.js"></script> 
+  <script type="text/javascript" src="assets/fonts/bitstream_vera_sans_mono_roman.typeface.js"></script>
+  <script src="assets/libs/tween.min.js"></script>
+
+  <script src="assets/libs/keyframe.js"></script> 
+  <!-- Javascript code that runs our Three.js examples --> 
+  <script>
+    // once everything is loaded, we run our Three.js stuff.
+    $(function () {
+
+      var stats = initStats();
+
+      // create a scene, that will hold all our elements such as objects, cameras and lights.
+      var scene = new THREE.Scene();
+
+      // create a camera, which defines where we're looking at.
+      var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+            // create a inspectedCamera
+      var inspectedCamera = new THREE.PerspectiveCamera(10, window.innerWidth / window.innerHeight, 10, 100);
+
+
+      var trackballControls = new THREE.TrackballControls(camera);
+
+      // create a render and set the size
+      var renderer = new THREE.WebGLRenderer();
+
+      renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMapEnabled = true;
+
+
+      var planeGeometry = new THREE.PlaneGeometry(20,20);
+      var planeMaterial = new THREE.MeshPhongMaterial({color: 0xcccccc});
+      var plane = new THREE.Mesh(planeGeometry,planeMaterial);
+
+      plane.rotation.x=-0.5*Math.PI;
+      plane.position.set(0,0,0);
+      plane.receiveShadow = true;
+      scene.add(plane);
+
+
+      var sceneGraph = new THREE.Object3D();
+      var cylinderGeometryBase = new THREE.CylinderGeometry(0.5, 0.5, 0.1, 128, 128 , false);
+      var cylinderMaterialBase = new THREE.MeshLambertMaterial({color: 0x012010, shading: THREE.FlatShading});
+      var cylinderBase = new THREE.Mesh(cylinderGeometryBase, cylinderMaterialBase);
+      cylinderBase.position.set(0, 0.05, 0);
+      sceneGraph.add(cylinderBase);
+
+      function mkJoint (radius, height) {
+          var joint = new THREE.Object3D();         
+          var sphereGeometry = new THREE.SphereGeometry(radius, 128, 128);
+          var sphereMaterial = new THREE.MeshLambertMaterial({color: 0xdddd33, shading: THREE.FlatShading});
+          var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+          sphere.position.set(0, 0, 0);
+          joint.add(sphere);
+
+          var cylinderGeometry = new THREE.CylinderGeometry(radius, radius, height, 128, 128, false);
+          var cylinderMaterial = new THREE.MeshLambertMaterial({color: 0xcccccc, shading: THREE.FlatShading, wireframe: false});
+          var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+          cylinder.position.set(0, height / 2 + radius, 0);
+          sphere.add(cylinder);
+
+          var hook = new THREE.Object3D();
+          hook.position.set(0, height/2+radius, 0);
+          cylinder.add(hook);
+
+          joint.sphere = sphere;          //per accedere agli oggetti creati nel grafo della scena.
+          joint.cylinder = cylinder;
+          joint.hook = hook;
+
+          return joint;
+        }
+
+      var height = 0.6;
+      var radius = 0.1;
+      var joint1 = mkJoint(radius, height);
+      joint1.sphere.position.set(0,0.15,0);
+      cylinderBase.add(joint1);
+      
+      var joint2 = mkJoint(radius, height);
+      joint1.hook.add(joint2);
+
+      //aggiungo l'ultima sfera di rotazione
+      var pernoGeometry = new THREE.SphereGeometry(0.1, 128, 128);
+      var pernoMaterial = new THREE.MeshLambertMaterial({color: 0xdddd33, shading: THREE.FlatShading});
+      var perno = new THREE.Mesh(pernoGeometry, pernoMaterial);
+      perno.position.set(0, 0, 0);
+
+      joint2.hook.add(perno);
+      joint2.perno = perno;
+
+      //aggiungo un aggancio all ultima sfera
+      var hook_head = new THREE.Object3D();
+      hook_head.position.set(0, radius, 0);
+      perno.add(hook_head);
+
+
+      var backLampGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.3, 128, 128, false);
+      var backLampMaterial = new THREE.MeshLambertMaterial({color: 0xFF9900, shading: THREE.FlatShading});
+      var backLamp = new THREE.Mesh(backLampGeometry, backLampMaterial);
+      backLamp.position.set(0, 0.15, 0);
+      hook_head.add(backLamp);
+
+      var hook_head_lamp = new THREE.Object3D();
+      hook_head_lamp.position.set(0, radius*2, 0);
+      backLamp.add(hook_head_lamp);
+
+      //aggiungo la cupola della lampadata
+      var cupolottoGeometry = new THREE.SphereGeometry(0.3, 128, 128, 0, Math.PI, 0, Math.PI);
+      var cupolottoMaterial = new THREE.MeshLambertMaterial({color: 0xFF9900, shading: THREE.FlatShading, side: THREE.DoubleSide });
+      var cupolotto = new THREE.Mesh(cupolottoGeometry, cupolottoMaterial);
+      cupolotto.rotation.x = Math.PI/2;
+      cupolotto.position.set(0, 0.15, 0);
+      hook_head_lamp.add(cupolotto);
+
+      var lampGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+      var lampMaterial = new THREE.MeshPhongMaterial({color: 0xdddd33, shading: THREE.FlatShading, opacity: 0.2, transparent: true});
+      var lamp = new THREE.Mesh(lampGeometry, lampMaterial);
+      lamp.scale.y = 1.3;
+      lamp.position.set(0, 0.3, 0);
+      lamp.rotation.x =  Math.PI;
+      backLamp.add(lamp);
+
+      //punto fisso per direzionamento della luce
+      var pointFix = new THREE.SphereGeometry(0.1, 16, 16);
+      var pointFixMaterial = new THREE.MeshLambertMaterial({color: 0xdddd33, shading: THREE.FlatShading, opacity: 0.01 , transparent: true});
+      var pointfix = new THREE.Mesh(pointFix,pointFixMaterial);
+      pointfix.position.set(0,-8,0);
+      lamp.add(pointfix);
+
+
+
+      //oggetto che riceve ombra
+      var sphereGeometry1 = new THREE.SphereGeometry(radius*2, 16, 16);
+      var sphereMaterial1 = new THREE.MeshPhongMaterial({color: 0xdddd33, shading: THREE.FlatShading});
+      var sphere1 = new THREE.Mesh(sphereGeometry1, sphereMaterial1);
+      sphere1.position.set(0, 0.2, 0);
+      sphere1.castShadow = true;
+      //scene.add(sphere1); aggiungere se si vuole vedere l'oggetto a forma di sfera per il testing
+
+
+      // add subtle ambient lighting
+      var ambiColor = "#0c0c0c";
+      var ambientLight = new THREE.AmbientLight(ambiColor);
+      scene.add(ambientLight);
+
+
+      // position and point the camera to the center of the scene
+      camera.position.set(-5,10,5);
+      camera.up = new THREE.Vector3(0,1,0);
+      camera.lookAt(scene.position);
+
+      // position and point the camera to the center of the scene
+      inspectedCamera.position.set(30,40,-30);
+      inspectedCamera.up = new THREE.Vector3(0,1,0);
+      inspectedCamera.lookAt(scene.position);
+
+      // add subtle ambient lighting
+      var ambientLight = new THREE.AmbientLight(0x0c0c0c);
+      scene.add(ambientLight);
+
+      var lightlamp = new THREE.PointLight( 0xFFFFCC, 30, 0.3 );
+      lightlamp.position.set(0,0,0);
+      lamp.add(lightlamp);
+      //scene.add( lightlamp );
+
+      // add spotlight for a bit of light
+      var spotLight1 = new THREE.SpotLight(0xFFFFFF);
+      spotLight1.position.set(-40, 60, -10);
+      spotLight1.lookAt(plane);
+      scene.add(spotLight1);
+
+      // add spotlight for a bit of light
+      var spotLight0 = new THREE.SpotLight(0xFFFCCC);
+      spotLight0.shadowMapWidth = 2048;
+      spotLight0.position.set(0,0,0);
+      spotLight0.castShadow = true;
+      spotLight0.shadowCameraNear = 0.01;
+      spotLight0.shadowCameraFar = 5000;
+      spotLight0.shadowCameraFov = 50;
+      spotLight0.shadowDarkness = 0.9;
+      spotLight0.shadowMapWidth = 2048;
+      spotLight0.shadowMapHeight = 2048;
+      spotLight0.shadowCameraVisible = true;
+      spotLight0.shadow;
+
+      lamp.add(spotLight0);
+
+      spotLight0.target = pointfix;
+      spotLight0.intensity = 4;
+      //spotLight0.rotation.x = Math.PI;
+      
+
+      //scene.add(spotLight0);
+
+
+      var target = new THREE.Object3D();
+      target.position = new THREE.Vector3(4, 0, 0);
+
+      var pointColor = "0xFFFFFF";
+      var spotLight = new THREE.SpotLight(pointColor);
+      spotLight.target = pointfix;
+      spotLight.distance = 2;
+      spotLight.position.set(0,-0.03,0);
+      spotLight.rotation.x = 2*Math.PI;
+
+      backLamp.add(spotLight);
+
+
+      //spotLight helper
+      var spotLightHelper = new THREE.SpotLightHelper(spotLight);
+      backLamp.add(spotLightHelper);
+      scene.add(spotLightHelper);
+
+      
+      //posiziono il grafo della scena nel punto dovuto
+      sceneGraph.position.set(-10,0,-10);
+      sceneGraph.castShadow = true;
+
+
+      //piego la lampada in posizione inziale
+      joint1.rotation.y = Math.PI;
+      joint1.sphere.rotation.x = Math.PI/4;
+      joint2.sphere.rotation.x = Math.PI/2;
+      joint2.rotation.y = Math.PI;
+      joint2.perno.rotation.x = Math.PI/3;
+      
+      //aggiungo il grafo della scena alla scena
+      scene.add(sceneGraph);
+
+       // add cameraHelper
+      var cameraHelper = new THREE.CameraHelper(inspectedCamera);
+      scene.add(inspectedCamera);
+      scene.add(cameraHelper);
+
+      var text1;
+      var text2;
+
+      function createMesh(geom) {
+        // assign two materials
+        // var meshMaterial = new THREE.MeshLambertMaterial({color: 0xff5555});
+        // var meshMaterial = new THREE.MeshNormalMaterial();
+        var meshMaterial = new THREE.MeshLambertMaterial({color: 0xff5555, metal: true, shading: THREE.FlatShading});
+        // meshMaterial.side=THREE.DoubleSide;
+        // create a multimaterial
+        meshMaterial.castShadow = true;
+        geom.castShadow = true;
+
+        var plane1 = THREE.SceneUtils.createMultiMaterialObject(geom, [meshMaterial]);
+
+        plane1.children[0].castShadow = true;
+        //plane1.children[1].castShadow = true;
+        
+
+        return plane1;
+      }
+
+      
+      // add the output of the renderer to the html element
+      $('body').append(renderer.domElement);
+
+      // call the render function
+      var step = 0;
+
+      // add axis helper
+      var axisHelper = new THREE.AxisHelper(3);
+      scene.add(axisHelper);
+
+
+      //define animations
+      var animator = null;
+      var duration = 4; // sec
+      var loopAnimation = false;
+
+      function initAnimator() {
+        animator = new KF.KeyFrameAnimator;
+        animator.init({ 
+          interps:
+            [
+              { keys:[0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1], 
+                values:[
+                  { x : -10, y : 0, z : -10 },
+                  { x : -9.5 , y : 1, z : -9.5 },
+                  { x : -9 , y : 0, z : -9  },
+                  { x : -8.5 , y : 1, z : -8.5 },
+                  { x : -8 , y : 0, z : -8 },
+                  { x : -7.5 , y : 1, z : -7.5 },
+                  { x : -7 , y : 0, z : -7 },
+                  { x : -6.5 , y : 1, z : -6.5 },
+                  { x : -6 , y : 0, z : -6 },
+                  { x : -5.5 , y : 1, z : -5.5 },
+                  { x : -5, y : 0, z : -5 },
+                ],
+                target:sceneGraph.position
+              },
+            ],
+          loop: loopAnimation,
+          duration: duration * 900
+        });
+      }
+
+      initAnimator();
+
+      // call the render function
+      render();
+      animator.start();
+      
+
+      var ruotalamp1 = new TWEEN.Tween(cylinderBase.rotation)
+          .to({x:0, y: Math.PI/3, z:0},1500)
+          .delay(3200)
+          .start();
+      
+      
+
+      var ruotalamp2 = new TWEEN.Tween(joint1.rotation)
+          .to({x:0, y: Math.PI/2, z:0},1500)
+          .delay(5700)
+          .start();
+
+
+      var ruotalamp3 = new TWEEN.Tween(perno.rotation)
+          .to({x:0, y: Math.PI/4, z:0},1500)
+          .delay(7200)
+          .start();
+            
+
+
+      var controls = new function () {
+        this.showAxisHelper = true;
+        this.inspectedCamera = false;
+        this.ambientColor = ambiColor;
+        this.alpha = 0;
+        this.beta = 0;
+        this.gamma = 0;
+        this.delta = 0;
+        this.epsilon = 0;
+        this.X = 0;
+        this.Z = 0;
+        this.lightControl = true;
+
+
+        //caratteri
+        this.size = 2;
+        this.height = 1;
+        this.bevelThickness = 2;
+        this.bevelSize = 0.5;
+        this.bevelEnabled = false;
+        this.bevelSegments = 3;
+        this.curveSegments = 12;
+        this.steps = 1;
+        this.font = "helvetiker";
+        this.weight = "normal";
+        // this.style = "italics";
+
+        this.asGeom = function () {
+          // remove the old text
+          scene.remove(text1);
+          // create a new one
+
+          var options = {
+            size: controls.size,
+            height: controls.height,
+            weight: controls.weight,
+            font: controls.font,
+            bevelThickness: controls.bevelThickness,
+            bevelSize: controls.bevelSize,
+            bevelSegments: controls.bevelSegments,
+            bevelEnabled: controls.bevelEnabled,
+            curveSegments: controls.curveSegments,
+            steps: controls.steps
+          };
+
+          //console.log(THREE.FontUtils.faces);
+
+          text1 = createMesh(new THREE.TextGeometry("CVDLAB", options));
+          text1.position.z = 0;
+          text1.position.x = -5;
+          scene.add(text1);
+
+        };
+
+
+      };
+
+      controls.asGeom();
+
+      var gui = new dat.GUI();
+      var spGui = gui.addFolder("Angoli");
+      var spGui1 = gui.addFolder("Posizione");
+      var spGui2 = gui.addFolder("Caratteri");
+
+
+      spGui2.add(controls, 'size', 0, 200).onChange(controls.asGeom);
+      spGui2.add(controls, 'height', 0, 200).onChange(controls.asGeom);
+      spGui2.add(controls, 'font', ['bitstream vera sans mono', 'helvetiker']).onChange(controls.asGeom);
+      spGui2.add(controls, 'bevelThickness', 0, 10).onChange(controls.asGeom);
+      spGui2.add(controls, 'bevelSize', 0, 10).onChange(controls.asGeom);
+      spGui2.add(controls, 'bevelSegments', 0, 30).step(1).onChange(controls.asGeom);
+      spGui2.add(controls, 'bevelEnabled').onChange(controls.asGeom);
+      spGui2.add(controls, 'curveSegments', 1, 30).step(1).onChange(controls.asGeom);
+      spGui2.add(controls, 'steps', 1, 5).step(1).onChange(controls.asGeom);
+
+      var axisControl = gui.add(controls, 'showAxisHelper');
+      var cameraControl = gui.add(controls, 'inspectedCamera');
+      var lightC = gui.add(controls, 'lightControl');
+      var ambientColor = gui.addColor(controls, 'ambientColor').onChange(function (e) {
+            ambientLight.color = new THREE.Color(e);
+        })
+      spGui.add(controls, 'alpha', 0.0, 2*Math.PI).onChange(function (value) {
+          joint1.rotation.y = value; 
+      });
+      spGui.add(controls, 'beta', 0.0, Math.PI/2).onChange(function (value) {
+          joint1.sphere.rotation.x = value; 
+      });
+      spGui.add(controls, 'gamma', 0.0, Math.PI/2).onChange(function (value) {
+          joint2.sphere.rotation.x = value; 
+      });
+      spGui.add(controls, 'delta', 0.0, 2*Math.PI).onChange(function (value) {
+          joint2.rotation.y = value; 
+      });
+
+      spGui.add(controls, 'epsilon', 0.0, Math.PI/2).onChange(function (value) {
+          joint2.perno.rotation.x = value; 
+      });
+
+      var X = spGui1.add(controls, 'X',-10,10);
+      var Z = spGui1.add(controls, 'Z',-10,10);
+
+      X.onChange(function(value) {
+        sceneGraph.position.setX(value);
+      });
+
+      Z.onChange(function(value) {
+        sceneGraph.position.setZ(value);
+      })
+
+
+      axisControl.onChange(function (value) {
+        axisHelper.visible = value;
+      });
+      
+      lightC.onChange(function(value) {
+        lightlamp.visible = value;
+        spotLight0.visible = value;
+        sphere1.castShadow = value;
+        text1.children[0].castShadow = value;
+      })
+
+      render();
+
+      
+      cameraControl.onChange(function (value) {
+        renderCamera = value ? inspectedCamera : camera;
+      });
+
+      var renderCamera = camera;
+
+
+      function render() {
+        stats.update();
+        trackballControls.update();
+        cameraHelper.update();
+
+        KF.update();
+        TWEEN.update();
+
+        trackballControls.update();
+
+        // render using requestAnimationFrame
+        requestAnimationFrame(render);
+        renderer.render(scene, renderCamera);
+      }
+
+      function initStats() {
+        var stats = new Stats();
+        stats.setMode(0); // 0: fps, 1: ms
+        $('body').append(stats.domElement);
+        return stats;
+      }
+    });
+  </script>  
+ </body>
+</html>

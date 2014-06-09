@@ -15,8 +15,8 @@ DRAW = COMP([VIEW,STRUCT,MKPOLS])
 
 master = assemblyDiagramInit([3,3,3])([[.4,9.2,.4],[.4,7.2,.4],[.3,2.7,0.3]])
 V,CV = master
-hpc = SKEL_1(STRUCT(MKPOLS(master)))
-hpc = cellNumbering (master,hpc)(range(len(CV)),CYAN,2)
+#hpc = SKEL_1(STRUCT(MKPOLS(master)))
+#hpc = cellNumbering (master,hpc)(range(len(CV)),CYAN,2)
 #VIEW(hpc)
 
 toRemove = [13,14]
@@ -27,16 +27,16 @@ master2 = V,[cell for k,cell in enumerate(CV) if not (k in toRemove)]
 toMerge = 13
 assx_split = assemblyDiagramInit([9,1,1])([[3.75,0.25,0.75,.25,2,.25,0.75,0.25,1.75],[8],[3.3]])
 x_splitted = diagram2cell(assx_split,master,toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(x_splitted)))
-hpc = cellNumbering (x_splitted,hpc)(range(len(x_splitted[1])),CYAN,2)
+#hpc = SKEL_1(STRUCT(MKPOLS(x_splitted)))
+#hpc = cellNumbering (x_splitted,hpc)(range(len(x_splitted[1])),CYAN,2)
 #VIEW(hpc)
 
 
 toMerge = 27
 assx_split = assemblyDiagramInit([1,3,1])([[10],[3.35,.25,4],[3.3]])
 x_splitted = diagram2cell(assx_split,x_splitted,toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(x_splitted)))
-hpc = cellNumbering (x_splitted,hpc)(range(len(x_splitted[1])),CYAN,2)
+#hpc = SKEL_1(STRUCT(MKPOLS(x_splitted)))
+#hpc = cellNumbering (x_splitted,hpc)(range(len(x_splitted[1])),CYAN,2)
 #VIEW(hpc)
 
 toRemove = [34,13,26,27,29,31,33]
@@ -47,8 +47,8 @@ master23 = V,[cell for k,cell in enumerate(CV) if not (k in toRemove)]
 toMerge = 28
 assx_split = assemblyDiagramInit([1,5,1])([[10],[3.35,.25,2,.25,1.75],[3.3]])
 x_splitted = diagram2cell(assx_split,x_splitted,toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(x_splitted)))
-hpc = cellNumbering (x_splitted,hpc)(range(len(x_splitted[1])),CYAN,2)
+#hpc = SKEL_1(STRUCT(MKPOLS(x_splitted)))
+#hpc = cellNumbering (x_splitted,hpc)(range(len(x_splitted[1])),CYAN,2)
 #VIEW(hpc)
 
 toRemove = [38,27,26,28,30,32,13,33]
@@ -59,8 +59,8 @@ master23 = V,[cell for k,cell in enumerate(CV) if not (k in toRemove)]
 toMerge = 29
 assx_split = assemblyDiagramInit([1,5,1])([[10],[2.35,.25,3,0.25,1.75],[3.3]])
 x_splitted = diagram2cell(assx_split,x_splitted,toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(x_splitted)))
-hpc = cellNumbering (x_splitted,hpc)(range(len(x_splitted[1])),CYAN,2)
+#hpc = SKEL_1(STRUCT(MKPOLS(x_splitted)))
+#hpc = cellNumbering (x_splitted,hpc)(range(len(x_splitted[1])),CYAN,2)
 #VIEW(hpc)
 
 toRemove = [38,27,26,28,31,32,13,37,29,36,41,42,43]
@@ -71,16 +71,16 @@ master23 = V,[cell for k,cell in enumerate(CV) if not (k in toRemove)]
 toMerge = 30
 assx_split = assemblyDiagramInit([1,5,1])([[10],[2.5,0.25,2,.25,3],[3.3]])
 x_splitted = diagram2cell(assx_split,x_splitted,toMerge)
-hpc = SKEL_1(STRUCT(MKPOLS(x_splitted)))
-hpc = cellNumbering (x_splitted,hpc)(range(len(x_splitted[1])),CYAN,2)
+#hpc = SKEL_1(STRUCT(MKPOLS(x_splitted)))
+#hpc = cellNumbering (x_splitted,hpc)(range(len(x_splitted[1])),CYAN,2)
 #VIEW(hpc)
 
 
 toRemove = [31,36,38,43,41,46,13,44]
 V,CV = x_splitted
 master23 = V,[cell for k,cell in enumerate(CV) if not (k in toRemove)]
-hpc = SKEL_1(STRUCT(MKPOLS(master23)))
-hpc = cellNumbering (master23,hpc)(range(len(master23[1])),CYAN,2)
+#hpc = SKEL_1(STRUCT(MKPOLS(master23)))
+#hpc = cellNumbering (master23,hpc)(range(len(master23[1])),CYAN,2)
 #VIEW(hpc)
 
 '''
