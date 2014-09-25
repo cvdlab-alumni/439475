@@ -30,4 +30,4 @@ Descriptions:
 * You can interact with object by clicking.
 * With the gui you can choose which environment and camera you prefer.
 * In addition to the frames, there are drawings on the walls .
-* With first person control you can move in the ambient by clicking the button "a","s","d","w".* With pointerLock you can move in the ambient by clicking the darts button.* With pointerLock you can move in the ambient by clicking the darts button.* With pointerLock you can move in the ambient by clicking the darts button.
+* With pointerLock you can move in the ambient by clicking the darts button.
