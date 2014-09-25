@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+ <head> 
+  <title>Final Project</title> 
+  <style>
+    body{
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #stats {  /* Align stats top-left */
+      position: absolute;
+      left: 0px;
+      top: 0px;
+    }
+
+    #blocker {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    #instructions {
+      width: 100%;
+      height: 100%;
+
+      display: -webkit-box;
+      display: -moz-box;
+      display: box;
+
+      -webkit-box-orient: horizontal;
+      -moz-box-orient: horizontal;
+      box-orient: horizontal;
+
+      -webkit-box-pack: center;
+      -moz-box-pack: center;
+      box-pack: center;
+
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
+
+      color: #ffffff;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    #pointer {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      margin-top: -15px;
+      margin-left: -15px;
+      width: 30px;
+      height: 30px;
+      display: none;
+      background-image: url("assets/textures/puntatore.png");
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+
+  </style> 
+  </head>
+  <body>
+  <div id="pointer"></div>
+  <!-- JavaScript libraries -->
+  <script src="assets/libs/jquery.min.js"></script> 
+  <script src="assets/libs/three.min.js"></script>
+  <script src="assets/libs/Stats.min.js"></script>
+  <script src="assets/libs/dat.gui.min.js"></script>
+  <script src="assets/libs/tween.min.js"></script>
+  <script src="assets/libs/PointerLockControls.js"></script>
+  <script src="assets/libs/TrackballControls.js"></script>
+  <script src="assets/libs/OBJLoader.js"></script>
+  <script src="assets/libs/MTLLoader.js"></script>
+  <script src="assets/libs/OBJMTLLoader.js"></script>
+  <script src="assets/libs/ParticleEngine.js"></script>
+  <script src="assets/libs/ParticleEngineExamples.js"></script>
+
+
+  <!-- my script-->
+  <script src="scripts/init.js"></script>
+  <script src="scripts/function.js"></script>
+  <script src="scripts/lighting.js"></script>
+  <script src="scripts/video.js"></script>
+  <script src="scripts/animation.js"></script>
+  <script src="scripts/floor.js"></script>
+  <script src="scripts/wall.js"></script>
+  <script src="scripts/roof.js"></script>
+  <script src="scripts/object.js"></script>
+  <script src="scripts/pointerLock.js"></script>
+  <script src="scripts/particles.js"></script>
+  <script src="scripts/skybox.js"></script>
+
+  <!-- Javascript code that runs our Three.js examples --> 
+  <script>
+    // once everything is loaded, we run our Three.js stuff.
+    $(function () {
+
+      // add the output of the renderer to the html element
+      $('body').append(webGLRenderer.domElement);
+
+    });
+  </script>  
+ </body>
+</html>

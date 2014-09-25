@@ -134,7 +134,8 @@ assetCondomini2 = STRUCT(NN(4)([ assetCondominiT, R([1,2])(PI/2) ]))
 assetCondominiT2 = T([1,2])([60,60])(assetCondomini2)
 assetCondomini22 = STRUCT(NN(4)([ assetCondominiT2, R([1,2])(PI/2) ]))
 
+VIEW(STRUCT([condominio]))
+
 
 VIEW(STRUCT([assetCondomini22]))
-#VIEW(STRUCT([condominio]))
 
