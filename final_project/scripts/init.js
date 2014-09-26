@@ -32,7 +32,7 @@ trackballControls = new THREE.TrackballControls(camera);
 
 // create a render and set the size
 var webGLRenderer = new THREE.WebGLRenderer();
-webGLRenderer.setClearColor(new THREE.Color(0xeeeeee, 1.0));
+webGLRenderer.setClearColor(new THREE.Color(0x87CEFA, 1.0));
 webGLRenderer.setSize(window.innerWidth, window.innerHeight);
 
 //per il tocco del mouse
